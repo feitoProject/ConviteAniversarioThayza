@@ -50,10 +50,14 @@
 
 <div class="container">
   <img id="primeira" src="primeira_pagina.jpg" alt="Envelope - primeira página">
+
+  <!-- Vídeo de transição -->
   <video id="transicao" playsinline muted>
     <source src="transicao.mp4" type="video/mp4">
     Seu navegador não suporta vídeo.
   </video>
+
+  <!-- Segunda imagem -->
   <img id="segunda" src="segunda_pagina.jpg" alt="Convite - segunda página">
 </div>
 
@@ -86,19 +90,21 @@ primeira.addEventListener("click", () => {
   transicao.classList.add("mostrar");
   transicao.play();
 
-  // Toca o áudio do vídeo
+  // Toca o áudio do vídeo (uma vez só)
+  audioVideo.loop = false;
   audioVideo.currentTime = 0;
   audioVideo.play().catch(() => console.log("Áudio do vídeo bloqueado"));
 
   // Quando o vídeo terminar
   transicao.onended = () => {
-    // Esconde o vídeo
+    // Fade-out do vídeo
     transicao.style.opacity = "0";
     transicao.style.pointerEvents = "none";
     transicao.style.zIndex = "-1";
 
-    // Pausa o áudio do vídeo
+    // Para o áudio do vídeo
     audioVideo.pause();
+    audioVideo.currentTime = 0;
 
     // Mostra a segunda imagem
     segunda.classList.add("mostrar");
