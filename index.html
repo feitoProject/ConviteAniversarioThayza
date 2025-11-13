@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MEU ANIVERSÁRIO EBAAA</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background-color: #000;
       display: flex;
@@ -19,7 +14,6 @@
       height: 100vh;
       overflow: hidden;
     }
-
     .container {
       position: relative;
       width: 100%;
@@ -27,7 +21,6 @@
       height: auto;
       overflow: hidden;
     }
-
     img, video {
       width: 100%;
       height: 100%;
@@ -35,7 +28,6 @@
       border-radius: 8px;
       object-fit: cover;
     }
-
     #segunda, #transicao {
       position: absolute;
       top: 0;
@@ -46,82 +38,87 @@
       pointer-events: none;
       transition: opacity 1.5s ease;
     }
-
-    #transicao {
-      z-index: 5;
-    }
-
+    #transicao { z-index: 5; }
     .mostrar {
       opacity: 1 !important;
       pointer-events: auto !important;
     }
-
-    audio {
-      display: none;
-    }
+    audio { display: none; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <img id="primeira" src="primeira_pagina.jpg" alt="Envelope - primeira página">
+<div class="container">
+  <img id="primeira" src="primeira_pagina.jpg" alt="Envelope - primeira página">
+  <video id="transicao" playsinline muted>
+    <source src="transicao.mp4" type="video/mp4">
+    Seu navegador não suporta vídeo.
+  </video>
+  <img id="segunda" src="segunda_pagina.jpg" alt="Convite - segunda página">
+</div>
 
-    <video id="transicao" playsinline muted>
-      <source src="transicao.mp4" type="video/mp4">
-      Seu navegador não suporta vídeo.
-    </video>
+<!-- Áudio do vídeo -->
+<audio id="audioVideo">
+  <source src="musica_fundo.mp3" type="audio/mpeg">
+</audio>
 
-    <img id="segunda" src="segunda_pagina.jpg" alt="Convite - segunda página">
-  </div>
+<!-- Música da segunda página -->
+<audio id="musica" loop>
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
 
-  <!-- Música da segunda página -->
-  <audio id="bg-music" loop>
-    <source src="musica_fundo.mp3" type="audio/mpeg">
-  </audio>
+<script>
+const primeira = document.getElementById("primeira");
+const segunda = document.getElementById("segunda");
+const transicao = document.getElementById("transicao");
+const audioVideo = document.getElementById("audioVideo");
+const musica = document.getElementById("musica");
 
-  <script>
-    const primeira = document.getElementById("primeira");
-    const segunda = document.getElementById("segunda");
-    const transicao = document.getElementById("transicao");
-    const bgMusic = document.getElementById("bg-music");
+window.onload = () => {
+  primeira.style.opacity = "1";
+};
 
-    window.onload = () => {
-      primeira.style.opacity = "1";
-    };
+primeira.addEventListener("click", () => {
+  // Fade-out da primeira imagem
+  primeira.style.opacity = "0";
 
-    primeira.addEventListener("click", () => {
-      // Fade-out da primeira imagem
-      primeira.style.opacity = "0";
+  // Mostra e toca o vídeo
+  transicao.classList.add("mostrar");
+  transicao.play();
 
-      // Mostra o vídeo de transição
-      transicao.classList.add("mostrar");
-      transicao.play();
+  // Toca o áudio do vídeo
+  audioVideo.currentTime = 0;
+  audioVideo.play().catch(() => console.log("Áudio do vídeo bloqueado"));
 
-      // Quando o vídeo terminar
-      transicao.onended = () => {
-        // Fade-out do vídeo
-        transicao.style.opacity = "0";
-        transicao.style.pointerEvents = "none";
+  // Quando o vídeo terminar
+  transicao.onended = () => {
+    // Esconde o vídeo
+    transicao.style.opacity = "0";
+    transicao.style.pointerEvents = "none";
+    transicao.style.zIndex = "-1";
 
-        // Mostra a segunda imagem
-        segunda.classList.add("mostrar");
+    // Pausa o áudio do vídeo
+    audioVideo.pause();
 
-        // Toca a música da segunda página com fade-in
-        bgMusic.volume = 0;
-        bgMusic.play().then(() => {
-          let vol = 0;
-          const fadeIn = setInterval(() => {
-            if (vol < 0.4) {
-              vol += 0.02;
-              bgMusic.volume = vol;
-            } else {
-              clearInterval(fadeIn);
-            }
-          }, 200);
-        }).catch(err => console.log("Reprodução automática bloqueada:", err));
-      };
-    });
-  </script>
+    // Mostra a segunda imagem
+    segunda.classList.add("mostrar");
+
+    // Toca a música da segunda página com fade-in
+    musica.volume = 0;
+    musica.play().then(() => {
+      let vol = 0;
+      const fadeIn = setInterval(() => {
+        if (vol < 0.4) {
+          vol += 0.02;
+          musica.volume = vol;
+        } else {
+          clearInterval(fadeIn);
+        }
+      }, 200);
+    }).catch(err => console.log("Reprodução automática bloqueada:", err));
+  };
+});
+</script>
 
 </body>
 </html>
