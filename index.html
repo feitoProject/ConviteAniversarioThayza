@@ -13,6 +13,7 @@
       align-items: center;
       height: 100vh;
       overflow: hidden;
+      font-family: sans-serif;
     }
     .container {
       position: relative;
@@ -39,9 +40,21 @@
       transition: opacity 1.5s ease;
     }
     #transicao { z-index: 5; }
-    .mostrar {
-      opacity: 1 !important;
-      pointer-events: auto !important;
+    .mostrar { opacity: 1 !important; pointer-events: auto !important; }
+
+    #btnContinuar {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background-color: #ff4081;
+      color: #fff;
+      cursor: pointer;
+      z-index: 10;
     }
     audio { display: none; }
   </style>
@@ -59,9 +72,12 @@
 
   <!-- Segunda imagem -->
   <img id="segunda" src="segunda_pagina.jpg" alt="Convite - segunda página">
+
+  <!-- Botão para continuar -->
+  <button id="btnContinuar">Continuar para o convite</button>
 </div>
 
-<!-- Áudio que toca junto com o vídeo -->
+<!-- Áudio do vídeo (som separado) -->
 <audio id="audioVideo">
   <source src="musica_fundo.mp3" type="audio/mpeg">
 </audio>
@@ -75,55 +91,63 @@
 const primeira = document.getElementById("primeira");
 const segunda = document.getElementById("segunda");
 const transicao = document.getElementById("transicao");
+const btnContinuar = document.getElementById("btnContinuar");
 const audioVideo = document.getElementById("audioVideo");
 const musica = document.getElementById("musica");
 
+// Fade-in da primeira imagem
 window.onload = () => {
   primeira.style.opacity = "1";
 };
 
+// Quando o usuário clicar na primeira imagem
 primeira.addEventListener("click", () => {
-  // Fade-out da primeira imagem
   primeira.style.opacity = "0";
-
-  // Mostra e toca o vídeo
   transicao.classList.add("mostrar");
   transicao.play();
 
-  // Toca o áudio do vídeo ao mesmo tempo (uma vez só)
+  // Mostra botão para ativar áudio
+  btnContinuar.style.display = "block";
+});
+
+// Clique no botão “Continuar para o convite”
+btnContinuar.addEventListener("click", () => {
+  // Toca áudio da transição
   audioVideo.loop = false;
   audioVideo.currentTime = 0;
   audioVideo.play().catch(() => console.log("Áudio do vídeo bloqueado"));
 
-  // Quando o vídeo terminar
-  transicao.onended = () => {
-    // Fade-out do vídeo
-    transicao.style.opacity = "0";
-    transicao.style.pointerEvents = "none";
-    transicao.style.zIndex = "-1";
-
-    // Para o áudio do vídeo
-    audioVideo.pause();
-    audioVideo.currentTime = 0;
-
-    // Mostra a segunda imagem
-    segunda.classList.add("mostrar");
-
-    // Toca a música da segunda página com fade-in
-    musica.volume = 0;
-    musica.play().then(() => {
-      let vol = 0;
-      const fadeIn = setInterval(() => {
-        if (vol < 0.4) {
-          vol += 0.02;
-          musica.volume = vol;
-        } else {
-          clearInterval(fadeIn);
-        }
-      }, 200);
-    }).catch(err => console.log("Reprodução automática bloqueada:", err));
-  };
+  // Esconde o botão
+  btnContinuar.style.display = "none";
 });
+
+// Quando o vídeo terminar
+transicao.onended = () => {
+  transicao.style.opacity = "0";
+  transicao.style.pointerEvents = "none";
+  transicao.style.zIndex = "-1";
+
+  // Para áudio da transição
+  audioVideo.pause();
+  audioVideo.currentTime = 0;
+
+  // Mostra segunda imagem
+  segunda.classList.add("mostrar");
+
+  // Toca música da segunda página com fade-in
+  musica.volume = 0;
+  musica.play().then(() => {
+    let vol = 0;
+    const fadeIn = setInterval(() => {
+      if (vol < 0.4) {
+        vol += 0.02;
+        musica.volume = vol;
+      } else {
+        clearInterval(fadeIn);
+      }
+    }, 200);
+  }).catch(err => console.log("Reprodução automática bloqueada:", err));
+};
 </script>
 
 </body>
